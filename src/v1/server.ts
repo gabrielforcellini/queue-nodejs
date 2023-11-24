@@ -12,13 +12,15 @@ serverAdapter.setBasePath('/admin/queues');
 const app = express();
 
 createBullBoard({
-  queues: Queue.queues.map(queue => new BullAdapter(queue.bull), { allowRetries: false }),
+  queues: Queue.queues.map((queue) => new BullAdapter(queue.bull), {
+    allowRetries: false
+  }),
   serverAdapter,
   options: {
     uiConfig: {
       boardTitle: 'Fila Chat'
-    },
-  },
+    }
+  }
 });
 
 app.use(express.json());

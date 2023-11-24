@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Queue from "../lib/Queue";
+import Queue from '../lib/Queue';
 import { User } from 'User';
 
 export default {
@@ -10,17 +10,17 @@ export default {
         user: {
           name,
           email,
-          password,
+          password
         }
-      }
-  
+      };
+
       // adicionar job registrationMail na fila
       await Queue.add('MessageReceived', user);
       await Queue.add('MessageStatus', user);
-  
+
       return res.json({ sucess: true, user });
     } catch (error) {
       return res.status(500).json({ error });
     }
   }
-}
+};

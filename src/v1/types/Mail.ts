@@ -1,9 +1,8 @@
 import { User } from 'User';
 
-
 export interface Queue {
   name: string;
-  data: User
+  data: User;
 }
 
 export interface Mail {
@@ -11,6 +10,6 @@ export interface Mail {
     user: {
       name: string;
       email: string;
-    }
-  }
+    };
+  };
 }

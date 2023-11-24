@@ -5,20 +5,20 @@ interface Mail {
     user: {
       name: string;
       email: string;
-    }
-  }
+    };
+  };
 }
 
 export default {
   key: 'MessageReceived',
   async handle({ data }: Mail) {
-    const { user } = data;    
+    const { user } = data;
 
     await Mail.sendMail({
-      from: "Queue test <queue@queue.com>",
+      from: 'Queue test <queue@queue.com>',
       to: `${user.name} <${user.email}>`,
-      subject: "Cadastro de usuario",
+      subject: 'Cadastro de usuario',
       html: `Olá, ${user.name}, Bem vindo ao sistema de filas do SEO.Chat`
     });
   }
-}
+};
