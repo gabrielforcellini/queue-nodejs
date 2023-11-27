@@ -18,7 +18,15 @@ export default {
     const queue = this.queues.find((queue) => queue.name === name);
     if (!queue) throw new Error('Erro');
 
-    return queue.bull.add(data);
+    return queue.bull.add(data, {
+      removeOnComplete: {
+        age: 3600, // keep up to 30 minutes
+        count: 100 // keep up to 100 jobs
+      },
+      removeOnFail: {
+        age: 1800 // keep up to 30 minutes
+      }
+    });
   },
   process() {
     // TODO Fazer tipagem correta do objeto abaixo
