@@ -74,12 +74,12 @@
 <div class="login-page">
     <div class="form">
         <form class="login-form" method="post" action="/admin/login">
-            <input type="text" name="username" placeholder="Username"/>
-            <input type="password" name="password" placeholder="Password"/>
+            <input type="text" name="username" placeholder="Usuário"/>
+            <input type="password" name="password" placeholder="Senha"/>
             <button>Login</button>
             <p class="message">Desenvolvido por SEO Sistemas</p>
             <% if (invalid) { %>
-                <p class="message error">Invalid username or password.</p>
+                <p class="message error">Usuário ou senha inválidos.</p>
             <% } %>
         </form>
     </div>
