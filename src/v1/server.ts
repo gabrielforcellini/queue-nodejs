@@ -115,6 +115,10 @@ app.get('/admin/logout', (req: Request, res: Response) => {
   }
 });
 
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({ success: true }).send();
+});
+
 app.listen(3333, () => {
   console.log('server running on localhost:3333');
 });
