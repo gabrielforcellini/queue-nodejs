@@ -10,6 +10,26 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { ensureLoggedIn } from 'connect-ensure-login';
+import expressWinston from 'express-winston';
+import { format, transports } from 'winston';
+
+const { json, prettyPrint, timestamp, combine } = format;
+const { File } = transports;
+
+const usuario = process.env.AUTH_USER;
+const senha = process.env.AUTH_PASS;
+
+if (!usuario) {
+  console.error(
+    'Erro: Usuário de autenticação do acesso ao monitoramento de fila não informado.'
+  );
+}
+
+if (!senha) {
+  console.error(
+    'Erro: Senha de autenticação do acesso ao monitoramento de fila não informado.'
+  );
+}
 
 passport.use(
   new LocalStrategy(function (username, password, cb) {
@@ -63,7 +83,7 @@ app.use(express.json());
 app.use(
   session({
     secret: 'Fila chat',
-    cookie: { maxAge: 3600000 },
+    cookie: { maxAge: 3600000 }, // Tempo em milissegundos
     saveUninitialized: false,
     resave: true
   })
@@ -72,6 +92,28 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   passport.session({
     pauseStream: true
+  })
+);
+
+/**
+ * Middleware que cria logs de acordo com o status da requisição.
+ * Status 200: info.log
+ * Status 400: warning.log
+ * Status 500: error.log
+ */
+app.use(
+  expressWinston.logger({
+    transports: [
+      new File({ filename: 'warning.log', level: 'warn' }),
+      new File({ filename: 'error.log', level: 'error' }),
+      new File({ filename: 'info.log', level: 'info' })
+    ],
+    format: combine(json(), timestamp(), prettyPrint()),
+    requestWhitelist: ['headers', 'body'],
+    responseWhitelist: ['headers', 'body'],
+    expressFormat: true,
+    meta: true,
+    statusLevels: true
   })
 );
 
