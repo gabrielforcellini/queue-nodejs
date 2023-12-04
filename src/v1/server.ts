@@ -5,12 +5,12 @@ import Queue from './app/lib/Queue';
 import { createBullBoard } from '@bull-board/api';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { ExpressAdapter } from '@bull-board/express';
-import session from 'express-session';
 import bodyParser from 'body-parser';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { ensureLoggedIn } from 'connect-ensure-login';
-import { Logger } from './utils/logger';
+import { Logger } from './utils/middlewares/logger';
+import { Session } from './utils/middlewares/session';
 const usuario = process.env.AUTH_USER;
 const senha = process.env.AUTH_PASS;
 
@@ -75,21 +75,13 @@ app.use(express.json());
  * Middleware de sessão do usuário.
  * maxAge: Cookie expira em X milissegundos
  */
-app.use(
-  session({
-    secret: 'Fila chat',
-    cookie: { maxAge: 3600000 }, // Tempo em milissegundos
-    saveUninitialized: false,
-    resave: true
-  })
-);
+app.use(Session);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   passport.session({
     pauseStream: true
   })
 );
-
 app.use(Logger);
 
 /**
@@ -125,7 +117,7 @@ app.post(
 
 app.get('/admin/logout', (req: Request, res: Response) => {
   try {
-    // TODO Tentar apagar o cookie que está a sessão do usuário antes de redirecioná-lo
+    // TODO: Tentar apagar o cookie que está a sessão do usuário antes de redirecioná-lo
     res.redirect('/admin/login');
   } catch (error) {
     console.error('Erro ao fazer logout: ', error);
