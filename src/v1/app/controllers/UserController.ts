@@ -14,7 +14,7 @@ export default {
         }
       };
 
-      // adicionar job registrationMail na fila
+      // Adiciona job registrationMail na fila
       await Queue.add('MessageReceived', user);
       await Queue.add('MessageStatus', user);
 

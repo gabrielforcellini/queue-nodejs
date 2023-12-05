@@ -13,6 +13,7 @@ import { Logger } from './utils/middlewares/logger';
 import { Session } from './utils/middlewares/session';
 const usuario = process.env.AUTH_USER;
 const senha = process.env.AUTH_PASS;
+const port = process.env.SERVER_PORT || 3333;
 
 if (!usuario) {
   console.error(
@@ -66,15 +67,10 @@ createBullBoard({
 });
 
 const app = express();
-// Configure view engine to render EJS templates.
+// Configura view engine para renderizar EJS templates.
 app.set('views', __dirname + '/app/views');
 app.set('view engine', 'ejs');
-
 app.use(express.json());
-/**
- * Middleware de sessão do usuário.
- * maxAge: Cookie expira em X milissegundos
- */
 app.use(Session);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
@@ -94,7 +90,6 @@ app.use(
   ensureLoggedIn({ redirectTo: '/admin/login' }),
   serverAdapter.getRouter()
 );
-
 app.post('/users', UserController.store);
 app.get('/admin/login', (req, res) => {
   res.render('login', { invalid: req.query.invalid === 'true' });
@@ -117,13 +112,13 @@ app.post(
 
 app.get('/admin/logout', (req: Request, res: Response) => {
   try {
-    // TODO: Tentar apagar o cookie que está a sessão do usuário antes de redirecioná-lo
+    // TODO: Apagar o cookie que está a sessão do usuário antes de redirecioná-lo
     res.redirect('/admin/login');
   } catch (error) {
     console.error('Erro ao fazer logout: ', error);
   }
 });
 
-app.listen(3333, () => {
-  console.log('server running on localhost:3333');
+app.listen(port, () => {
+  console.log(`server running on localhost: ${port}`);
 });
