@@ -1,8 +1,8 @@
 import expressWinston from 'express-winston';
-import { format, transports } from 'winston';
+import winston, { format } from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
 const { json, prettyPrint, timestamp, combine } = format;
-const { File } = transports;
 
 /**
  * Middleware que cria logs de acordo com o status da requisição.
@@ -10,11 +10,29 @@ const { File } = transports;
  * Status 400: warning.log
  * Status 500: error.log
  */
-export const Logger = expressWinston.logger({
+export const ExpressLogger = expressWinston.logger({
   transports: [
-    new File({ filename: 'warning.log', level: 'warn' }),
-    new File({ filename: 'error.log', level: 'error' }),
-    new File({ filename: 'info.log', level: 'info' })
+    new DailyRotateFile({
+      filename: './src/v1/logs/warning-%DATE%.log',
+      level: 'warn',
+      datePattern: 'DD-MM-YYYY-HH',
+      zippedArchive: true,
+      maxFiles: '14d'
+    }),
+    new DailyRotateFile({
+      filename: './src/v1/logs/error-%DATE%.log',
+      level: 'error',
+      datePattern: 'DD-MM-YYYY-HH',
+      zippedArchive: true,
+      maxFiles: '14d'
+    }),
+    new DailyRotateFile({
+      filename: './src/v1/logs/info-%DATE%.log',
+      level: 'info',
+      datePattern: 'DD-MM-YYYY-HH',
+      zippedArchive: true,
+      maxFiles: '14d'
+    })
   ],
   format: combine(json(), timestamp(), prettyPrint()),
   requestWhitelist: ['headers', 'body'],
@@ -22,4 +40,31 @@ export const Logger = expressWinston.logger({
   expressFormat: true,
   meta: true,
   statusLevels: true
+});
+
+export const Logger = winston.createLogger({
+  transports: [
+    new DailyRotateFile({
+      filename: './src/v1/logs/warning-%DATE%.log',
+      level: 'warn',
+      datePattern: 'DD-MM-YYYY-HH',
+      zippedArchive: true,
+      maxFiles: '14d'
+    }),
+    new DailyRotateFile({
+      filename: './src/v1/logs/error-%DATE%.log',
+      level: 'error',
+      datePattern: 'DD-MM-YYYY-HH',
+      zippedArchive: true,
+      maxFiles: '14d'
+    }),
+    new DailyRotateFile({
+      filename: './src/v1/logs/info-%DATE%.log',
+      level: 'info',
+      datePattern: 'DD-MM-YYYY-HH',
+      zippedArchive: true,
+      maxFiles: '14d'
+    })
+  ],
+  format: combine(json(), timestamp(), prettyPrint())
 });

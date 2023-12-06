@@ -9,7 +9,7 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { ensureLoggedIn } from 'connect-ensure-login';
-import { Logger } from './utils/middlewares/logger';
+import { ExpressLogger, Logger } from './utils/middlewares/logger';
 import { Session } from './utils/middlewares/session';
 const usuario = process.env.AUTH_USER;
 const senha = process.env.AUTH_PASS;
@@ -78,7 +78,7 @@ app.use(
     pauseStream: true
   })
 );
-app.use(Logger);
+app.use(ExpressLogger);
 
 /**
  * Middleware que define o monitoramento de filas
@@ -120,5 +120,6 @@ app.get('/admin/logout', (req: Request, res: Response) => {
 });
 
 app.listen(port, () => {
+  Logger.info(`server running on localhost: ${port}`);
   console.log(`server running on localhost: ${port}`);
 });
