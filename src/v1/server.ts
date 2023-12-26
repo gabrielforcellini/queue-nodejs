@@ -33,7 +33,7 @@ passport.use(
       username === process.env.AUTH_USER &&
       password === process.env.AUTH_PASS
     ) {
-      return cb(null, { user: 'seosistemas' });
+      return cb(null, { user: process.env.AUTH_USER });
     }
     return cb(null, false);
   })
@@ -112,8 +112,9 @@ app.post(
 
 app.get('/admin/logout', (req: Request, res: Response) => {
   try {
-    // TODO: Apagar o cookie que está a sessão do usuário antes de redirecioná-lo
-    res.redirect('/admin/login');
+    req.session.destroy(() => {
+      res.redirect('/admin/login');
+    });
   } catch (error) {
     console.error('Erro ao fazer logout: ', error);
   }
